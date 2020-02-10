@@ -1,0 +1,135 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include "ESP8266.h"
+
+#define ARDUINO_ID  "ARDUINO_MEGA_ADK"
+#define CH_PD 44
+#define RST 46
+#define GPIO0 48
+
+// WIFI
+#define SSID        "HUGO"
+#define PASSWORD    "hugogustavo"
+ESP8266 wifi(Serial1, 115200);
+
+int DS18B20 = 13;
+OneWire ourWire(DS18B20);
+DallasTemperature sensors(&ourWire);
+
+float TEMPERATURE = 0.0;
+float TURBIDITY = 0.0;
+
+void setup(){
+    configurePins();
+    configureSerial();
+    configureWifi();
+    startSensors();
+    configureDelaySetup();
+}
+
+void loop(){
+    readTemperature();
+    readTurbidity();
+    provide();
+    delay(10000);
+}
+
+void configurePins(){
+    pinMode(CH_PD ,OUTPUT);
+    pinMode(RST, OUTPUT);
+    pinMode(GPIO0, OUTPUT);
+    digitalWrite(CH_PD, HIGH);
+    digitalWrite(RST, HIGH);
+    digitalWrite(GPIO0, HIGH);
+}
+
+void configureSerial(){
+    Serial.begin(115200);
+}
+
+void configureWifi(){
+    if ( wifi.setOprToStationSoftAP() ) {
+        Serial.println("Station e AP OK.");
+    } else {
+        Serial.println("Erro em setar Station e AP.");
+    }
+ 
+    if ( wifi.joinAP(SSID, PASSWORD) ) {
+        Serial.println("Conectado com Sucesso.");
+        Serial.println("IP: ");
+        Serial.println(wifi.getLocalIP().c_str());
+    } else {
+        Serial.println("Falha na conexao AP.");
+    }
+    
+    if ( wifi.enableMUX() ) {
+        Serial.println("Multiplas conexoes OK.");
+    } else {
+        Serial.println("Erro ao setar multiplas conexoes.");
+    }
+    
+    if ( wifi.startTCPServer(80) ) {
+        Serial.println("Servidor iniciado com sucesso.");
+    } else {
+        Serial.println("Erro ao iniciar servidor.");
+    }
+}
+
+void startSensors(){
+    sensors.begin();
+}
+
+void configureDelaySetup(){
+    delay(10000);
+}
+
+void provide(){
+    uint8_t buffer[128] = {0};
+    uint8_t mux_id;
+
+    uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100);
+    if (len > 0) {
+        Serial.print("Status:[");
+        Serial.print(wifi.getIPStatus().c_str());
+        Serial.println("]");
+        
+        Serial.print("Recebido de :");
+        Serial.print(mux_id);
+        Serial.print("[");
+        for(uint32_t i = 0; i < len; i++) {
+            Serial.print((char)buffer[i]);
+        }
+        Serial.print("]\r\n");
+        
+        sprintf(((char*) buffer), "%f", TURBIDITY);
+        
+        if(wifi.send(mux_id, buffer, len)) {
+            Serial.print("Enviado de volta...\r\n");
+        } else {
+            Serial.print("Erro ao enviar de volta\r\n");
+        }
+
+        if (wifi.releaseTCP(mux_id)) {
+            Serial.print("Liberando conexao TCP com ID: ");
+            Serial.print(mux_id);
+            Serial.println(" OK");
+        } else {
+            Serial.print("Erro ao liberar TCP com ID: ");
+            Serial.print(mux_id);
+        }
+        
+        Serial.print("Status:[");
+        Serial.print(wifi.getIPStatus().c_str());
+        Serial.println("]");
+    }
+}
+
+void readTemperature(){
+    sensors.requestTemperatures();
+    TURBIDITY = sensors.getTempCByIndex(0);
+}
+
+void readTurbidity(){
+    int sensorValue = analogRead(A0);
+    TURBIDITY = sensorValue * (5.0 / 1024.0);
+}
