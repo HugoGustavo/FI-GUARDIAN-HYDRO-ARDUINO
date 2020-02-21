@@ -1,56 +1,51 @@
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "PacketUtil.hpp"
 
 using namespace std;
 
-vector<unsigned char>* PacketUtil::buildField(String field){
-    int length = field.length();
-    vector<unsigned char>* result = new vector<unsigned char>();
-
+Bytes* PacketUtil::build(String input){
+    Bytes* result = new Bytes();
+    
+    int length = input.length();
     result->push_back( (unsigned char) ( (0xFF00 & length) >> 8 ) );
     result->push_back( (unsigned char) ( 0x00FF & length ) );
-    for(int i = 0; i < length; i++) result->push_back( (unsigned char) field.charAt(i) );
-
-    return result;    
-}
-
-vector<unsigned char>* PacketUtil::concat(vector<unsigned char>* destiny, vector<unsigned char>* source){
-    vector<unsigned char>* result = new vector<unsigned char>();
-    vector<unsigned char>::iterator end;
-    
-    end = result->end();
-    result->insert(end, destiny->begin(), destiny->end());
-    end = result->end();
-    result->insert(end, source->begin(), source->end());
+    for(int i = 0; i < length; i++) result->push_back( (unsigned char) input.charAt(i) );
 
     return result;
 }
 
-unsigned int PacketUtil::length(vector<unsigned char>* destiny){
-    return destiny->size();
+Bytes* PacketUtil::build(uint8_t* buffer, uint32_t size){
+    Bytes* result = new Bytes();
+    for(uint32_t i = 0; i < size; i++)
+        result->push_back(buffer[i]);
+    return result;
 }
 
-bool PacketUtil::equals(vector<unsigned char>* destiny, vector<unsigned char>* source){
-    return (*destiny) == (*source);
-}
-
-void PacketUtil::println(vector<unsigned char>* field){
-    PacketUtil::print(field);
+void PacketUtil::println(Bytes* input){
+    PacketUtil::print(input);
     Serial.println();
 }
 
-void PacketUtil::print(vector<unsigned char>* field){
-    for(vector<unsigned char>::iterator it = field->begin(); it != field->end(); ++it)
-        PacketUtil::print(*it);
+void PacketUtil::print(Bytes* input){
+    for(unsigned int i = 0; i < input->getSize(); i++)
+        PacketUtil::print(input->at(i));
 }
 
-void PacketUtil::print(unsigned char x){
+void PacketUtil::print(const unsigned char x){
     char value = (char) x;
     if( value >= 32 && value <= 126 ) Serial.print(value);
     else {
         Serial.print("\\x"); Serial.print(x, HEX);
     }
+}
+
+String PacketUtil::toString(Bytes* input){
+    String result = String();
+
+    for(unsigned int i = 0; i < input->getSize(); i++){
+        unsigned char value = input->at(i);
+        if( ((char) value) >= 33 && ((char) value) <= 126 ) result.concat(String((char) value));
+        else result.concat("\\x" + String(value, HEX));
+    }
+
+    return result;
 }

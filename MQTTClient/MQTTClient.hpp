@@ -1,12 +1,10 @@
 #ifndef MQTTCLIENT_HPP
 #define MQTTCLIENT_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
 #include "ESP8266.h"
+#include "Bytes.hpp"
+#include "Logger.hpp"
 #include "Connect.hpp" 
 #include "Connack.hpp"
 #include "Publish.hpp"
@@ -24,8 +22,11 @@ class MQTTClient {
         unsigned int port;
         bool cleanSession;
 
+
     public:
         MQTTClient(ESP8266* wifi);
+
+        ~MQTTClient();
 
         String getId();
 
@@ -58,6 +59,19 @@ class MQTTClient {
         void publish(String topic, String payload);
 
         void disconnect();  
+
+    private:
+        bool createTCPConnection();
+
+        void sendConnectPacket();
+
+        bool receiveConnackPacket();
+
+        void send(ControlPacket* controlPacket);
+
+        bool receive(ControlPacket* controlPacket);
+
+        void releaseTCPConnection();
 };
 
 #endif

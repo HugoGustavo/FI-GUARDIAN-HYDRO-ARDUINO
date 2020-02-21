@@ -1,7 +1,3 @@
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "PubRel.hpp"
 
 using namespace std;
@@ -11,20 +7,24 @@ PubRel::PubRel(const unsigned int packetIdentifier) : ControlPacket(ControlPacke
     this->remainingLength = 0x02;
 }
 
+PubRel::~PubRel(){
+    this->packetIdentifier = 0;
+}
+
 unsigned int PubRel::getPacketIdentifier(){
     return packetIdentifier;
 }
 
-void PubRel::setPacketIdentifier(unsigned int packetIdentifier){
+void PubRel::setPacketIdentifier(const unsigned int packetIdentifier){
     this->packetIdentifier = packetIdentifier;
 }
 
-vector<unsigned char>* PubRel::toChar(){
-    vector<unsigned char>* packetIdentifier = new vector<unsigned char>();
+Bytes* PubRel::toBytes(){
+    Bytes* packetIdentifier = new Bytes();
     packetIdentifier->push_back( (unsigned char) ( (0xFF00 & this->packetIdentifier) >> 8 ) );
     packetIdentifier->push_back( (unsigned char) ( 0x00FF & this->packetIdentifier) );
 
-    vector<unsigned char>* result = ControlPacket::toChar();
-    result = PacketUtil::concat(result, packetIdentifier);
+    Bytes* result = ControlPacket::toBytes();
+    result->concat(packetIdentifier);
     return result;
 }

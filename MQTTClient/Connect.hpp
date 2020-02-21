@@ -2,11 +2,8 @@
 #ifndef CONNECT_HPP
 #define CONNECT_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 #include "ControlPacket.hpp"
 
@@ -15,7 +12,7 @@ using namespace std;
 
 class Connect : public ControlPacket {
     private:
-        vector<unsigned char>* variableHeader;
+        Bytes* variableHeader;
         unsigned int keepAlive;
         String clientIdentifier;
         String willTopic;
@@ -30,13 +27,15 @@ class Connect : public ControlPacket {
 
         Connect(const bool userName, const bool password, const bool willRetain, const unsigned char willQoS, const bool willFlag, const bool cleanSession);
 
-        vector<unsigned char>* getVariableHeader();
+        ~Connect();
 
-        void setVariableHeader(vector<unsigned char>* variableHeader);
+        Bytes* getVariableHeader();
+
+        void setVariableHeader(Bytes* variableHeader);
 
         unsigned int getKeepAlive();
 
-        void setKeepAlive(unsigned int keepAlive);
+        void setKeepAlive(const unsigned int keepAlive);
 
         String getClientIdentifier();
 
@@ -58,7 +57,7 @@ class Connect : public ControlPacket {
 
         void setPassword(String password);
 
-        vector<unsigned char>* toChar();
+        Bytes* toBytes();
 };
 
 #endif

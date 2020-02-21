@@ -1,7 +1,3 @@
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "ControlPacket.hpp"
 
 using namespace std;
@@ -10,6 +6,12 @@ ControlPacket::ControlPacket(const unsigned char type, const unsigned char flags
     this->type = type;
     this->flags = flags;
     this->remainingLength = remainingLength;
+}
+
+ControlPacket::~ControlPacket(){
+    this->type = 0;
+    this->flags = 0;
+    this->remainingLength = 0;
 }
 
 unsigned char ControlPacket::getType(){ 
@@ -36,9 +38,9 @@ void ControlPacket::setRemainingLength(const long int remainingLength){
     this->remainingLength = remainingLength;
 }
 
-vector<unsigned char>* ControlPacket::toChar(){
-    vector<unsigned char>* result = new vector<unsigned char>();
-    result->push_back( this->type | this->flags );
+Bytes* ControlPacket::toBytes(){
+    Bytes* result = new Bytes();
+    result->push_back( (unsigned char) ( this->type | this->flags ) );
 
     unsigned char encodeByte;
     long int remainingLength = this->remainingLength;
@@ -46,7 +48,7 @@ vector<unsigned char>* ControlPacket::toChar(){
         encodeByte = remainingLength % 128;
         remainingLength = remainingLength / 128;
         if( remainingLength ) encodeByte = encodeByte | 0x80;
-        result->push_back( encodeByte );
+        result->push_back( (unsigned char) encodeByte );
     } while ( remainingLength > 0 );
     
     return result;

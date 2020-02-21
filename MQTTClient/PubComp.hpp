@@ -1,11 +1,8 @@
 #ifndef PUBCOMP_HPP
 #define PUBCOMP_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 #include "ControlPacket.hpp"
 
@@ -18,11 +15,13 @@ class PubComp : public ControlPacket {
     public:
         PubComp(const unsigned int packetIdentifier);
 
+        ~PubComp();
+
         unsigned int getPacketIdentifier();
 
-        void setPacketIdentifier(unsigned int packetIdentifier);
+        void setPacketIdentifier(const unsigned int packetIdentifier);
 
-        vector<unsigned char>* toChar();
+        Bytes* toBytes();
 };
 
 #endif

@@ -1,23 +1,19 @@
 #ifndef PACKETUTIL_HPP
 #define PACKETUTIL_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 
 using namespace std;
 
 class PacketUtil {
     public:     
-        static vector<unsigned char>* buildField(String field);
-        static vector<unsigned char>* concat(vector<unsigned char>* destiny, vector<unsigned char>* source);
-        static unsigned int length(vector<unsigned char>* destiny);
-        static bool equals(vector<unsigned char>* destiny, vector<unsigned char>* source);
-        static void print(unsigned char field);
-        static void print(vector<unsigned char>* field);
-        static void println(vector<unsigned char>* field);
+        static Bytes* build(String input);
+        static Bytes* build(uint8_t* buffer, uint32_t size);
+        static void println(Bytes* input);
+        static void print(Bytes* input);
+        static void print(const unsigned char input);
+        static String toString(Bytes* input);
 };
 
 #endif

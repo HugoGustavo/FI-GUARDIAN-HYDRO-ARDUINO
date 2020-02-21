@@ -1,11 +1,8 @@
 #ifndef PUBLISH_HPP
 #define PUBLISH_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 #include "ControlPacket.hpp" 
 
@@ -26,6 +23,8 @@ class Publish : public ControlPacket {
         static const unsigned char PUBLISH_QOS_LEVEL_2 = 0x02;
 
         Publish(const bool dup, const unsigned char qosLevel, const bool retain);
+
+        ~Publish();
 
         bool isDup();
 
@@ -51,7 +50,7 @@ class Publish : public ControlPacket {
 
         void setPayload(String payload);
 
-        vector<unsigned char>* toChar();
+        Bytes* toBytes();
 };
 
 #endif

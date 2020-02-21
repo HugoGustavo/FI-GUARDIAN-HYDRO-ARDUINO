@@ -1,11 +1,8 @@
 #ifndef PINGREQ_HPP
 #define PINGREQ_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 #include "ControlPacket.hpp"
 
@@ -15,7 +12,9 @@ class PingReq : public ControlPacket {
     public:
         PingReq();
 
-        vector<unsigned char>* toChar();
+        ~PingReq();
+
+        Bytes* toBytes();
 };
 
 #endif

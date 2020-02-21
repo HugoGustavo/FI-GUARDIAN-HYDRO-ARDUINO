@@ -1,11 +1,8 @@
 #ifndef CONTROLPACKET_HPP
 #define CONTROLPACKET_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 
 using namespace std;
@@ -50,6 +47,8 @@ class ControlPacket {
     public:
         ControlPacket(const unsigned char type, const unsigned char flags, const long int remainingLength=0x00000000);
 
+        ~ControlPacket();
+
         unsigned char getType();
         
         void setType(const unsigned char type);
@@ -60,9 +59,9 @@ class ControlPacket {
 
         long int getRemainingLength();
 
-        void setRemainingLength(long int remainingLength);
+        void setRemainingLength(const long int remainingLength);
 
-        vector<unsigned char>* toChar();
+        Bytes* toBytes();
 
 };
 

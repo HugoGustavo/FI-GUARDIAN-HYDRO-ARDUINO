@@ -1,11 +1,8 @@
 #ifndef CONNACK_HPP
 #define CONNACK_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 #include "ControlPacket.hpp"
 
@@ -24,17 +21,19 @@ class Connack : public ControlPacket {
         static const unsigned char CONNACK_RETURN_CODE_CONNECTION_REFUSED_BAD_USERNAME_OR_PASSWORD      = 0x04;
         static const unsigned char CONNACK_RETURN_CODE_CONNECTION_REFUSED_NOT_AUTHORIZED                = 0x05;
 
-        Connack(bool cleanSession, const unsigned char returnCode);
+        Connack(const bool cleanSession, const unsigned char returnCode);
 
-        bool getCleanSession();
+        ~Connack();
 
-        void setCleanSession(bool cleanSession);
+        bool isCleanSession();
+
+        void setCleanSession(const bool cleanSession);
 
         unsigned char getReturnCode();
 
         void setReturnCode(const unsigned char returnCode);
 
-        vector<unsigned char>* toChar();
+        Bytes* toBytes();
 };
 
 #endif

@@ -1,13 +1,9 @@
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Connect.hpp"
 
 using namespace std;
 
 Connect::Connect(const bool userName, const bool password, const bool willRetain, const unsigned char willQoS, const bool willFlag, const bool cleanSession) : ControlPacket(ControlPacket::CONTROL_PACKET_TYPE_CONNECT, ControlPacket::CONTROL_PACKET_FLAG_CONNECT){
-    this->variableHeader = new vector<unsigned char>;
+    this->variableHeader = new Bytes;
     this->variableHeader->push_back( (unsigned char) 0 );
     this->variableHeader->push_back( (unsigned char) 4 );
     this->variableHeader->push_back( (unsigned char) 'M' );
@@ -39,11 +35,23 @@ Connect::Connect(const bool userName, const bool password, const bool willRetain
     this->keepAlive = 60;
 }
 
-vector<unsigned char>* Connect::getVariableHeader(){
+Connect::~Connect(){
+    //delete(this->variableHeader);
+    this->variableHeader = nullptr;
+    this->keepAlive = 0;
+    this->clientIdentifier = "";
+    this->willTopic = "";
+    this->willMessage = "";
+    this->userName = "";
+    this->password = "";
+    
+}
+
+Bytes* Connect::getVariableHeader(){
     return variableHeader;
 }
 
-void Connect::setVariableHeader(vector<unsigned char>* variableHeader){
+void Connect::setVariableHeader(Bytes* variableHeader){
     this->variableHeader = variableHeader;
 }
 
@@ -51,7 +59,7 @@ unsigned int Connect::getKeepAlive(){
     return keepAlive;
 }
 
-void Connect::setKeepAlive(unsigned int keepAlive){
+void Connect::setKeepAlive(const unsigned int keepAlive){
     this->keepAlive = keepAlive;
 }
 
@@ -95,36 +103,39 @@ void Connect::setPassword(String password){
     this->password = password;
 }
 
-vector<unsigned char>* Connect::toChar(){
-    vector<unsigned char>* payload = nullptr;
+Bytes* Connect::toBytes(){
+    Bytes* payload = new Bytes();
+
     if ( this->clientIdentifier.length() != 0 ){
-        vector<unsigned char>* clientIdentifierField = PacketUtil::buildField(this->clientIdentifier);
-        payload = payload == nullptr ? clientIdentifierField : PacketUtil::concat(payload, clientIdentifierField);
+        Bytes* clientIdentifierBytes = PacketUtil::build(this->clientIdentifier);
+        payload->concat(clientIdentifierBytes);
     }
 
     unsigned char flags = this->variableHeader->at(7);
     if ( ( flags & ( 0x01 << 2 ) ) && this->willTopic.length() != 0 ){
-        vector<unsigned char>* willTopicField = PacketUtil::buildField(this->willTopic);
-        payload = payload == nullptr ? willTopicField : PacketUtil::concat(payload, willTopicField);
+        Bytes* willTopicBytes = PacketUtil::build(this->willTopic);
+        payload->concat(willTopicBytes);
     }
     if ( ( flags & ( 0x01 << 2 ) ) && this->willMessage.length() != 0 ){
-        vector<unsigned char>* willMessageField = PacketUtil::buildField(this->willMessage);
-        payload = payload == nullptr ? willMessageField : PacketUtil::concat(payload, willMessageField);
+        Bytes* willMessageBytes = PacketUtil::build(this->willMessage);
+        payload->concat(willMessageBytes);
     }
     if ( ( flags & ( 0x01 << 7 ) ) && this->userName.length() != 0 ){
-        vector<unsigned char>* userNameField = PacketUtil::buildField(this->userName);
-        payload = payload == nullptr ? userNameField : PacketUtil::concat(payload, userNameField);
+        Bytes* userNameBytes = PacketUtil::build(this->userName);
+        payload->concat(userNameBytes);
 
         if ( ( flags & ( 0x01 << 6 ) ) && this->password.length() != 0 ){
-            vector<unsigned char>* passwordField = PacketUtil::buildField(this->password);
-            payload = payload == nullptr ? passwordField : PacketUtil::concat(payload, passwordField);
+            Bytes* passwordBytes = PacketUtil::build(this->password);
+            payload->concat(passwordBytes);
         }
     }
 
-    this->setRemainingLength( (long int) ( this->variableHeader->size() + payload->size() ) );
-
-    vector<unsigned char>* result = ControlPacket::toChar();
-    result = PacketUtil::concat(result, this->variableHeader);
-    result = PacketUtil::concat(result, payload);
+    this->setRemainingLength( (long int) ( this->variableHeader->getSize() + payload->getSize() + sizeof(this->keepAlive)) );
+    
+    Bytes* result = ControlPacket::toBytes();
+    result->concat(this->variableHeader);
+    result->push_back( (unsigned char) ( (this->keepAlive & 0xFF00) >> 8) );
+    result->push_back( (unsigned char) ( (this->keepAlive & 0x00FF) ) );
+    result->concat(payload);
     return result;
 }

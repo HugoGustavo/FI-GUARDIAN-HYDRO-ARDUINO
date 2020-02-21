@@ -1,11 +1,8 @@
 #ifndef PINGRESP_HPP
 #define PINGRESP_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 #include "ControlPacket.hpp"
 
@@ -15,7 +12,9 @@ class PingResp : public ControlPacket {
     public:
         PingResp();
 
-        vector<unsigned char>* toChar();
+        ~PingResp();
+
+        Bytes* toBytes();
 };
 
 #endif

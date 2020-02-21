@@ -1,11 +1,8 @@
 #ifndef PUBREC_HPP
 #define PUBREC_HPP
 
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Arduino.h"
+#include "Bytes.hpp"
 #include "PacketUtil.hpp"
 #include "ControlPacket.hpp"
 
@@ -19,11 +16,13 @@ class PubRec : public ControlPacket {
     public:
         PubRec(const unsigned int packetIdentifier);
 
+        ~PubRec();
+
         unsigned int getPacketIdentifier();
 
-        void setPacketIdentifier(unsigned int packetIdentifier);
+        void setPacketIdentifier(const unsigned int packetIdentifier);
 
-        vector<unsigned char>* toChar();
+        Bytes* toBytes();
 };
 
 #endif

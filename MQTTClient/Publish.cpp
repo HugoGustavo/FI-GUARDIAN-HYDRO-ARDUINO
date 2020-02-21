@@ -1,7 +1,3 @@
-#include <StandardCplusplus.h>
-#include <vector>
-#include <iterator>
-
 #include "Publish.hpp" 
 
 using namespace std;
@@ -17,6 +13,16 @@ Publish::Publish(const bool dup, const unsigned char qosLevel, const bool retain
     this->flags = dup ? this->flags | (0x01 << 3) : this->flags;
     this->flags = this->flags | ( (this->qosLevel & 0x03) << 1 );
     this->flags = retain ? this->flags | 0x01 : this->flags;    
+}
+
+
+Publish::~Publish(){
+    this->dup = false;
+    this->qosLevel = 0;
+    this->retain = false;
+    this->topicName = "";
+    this->packetIdentifier = 0;
+    this->payload = "";
 }
 
 bool Publish::isDup(){
@@ -67,30 +73,28 @@ void Publish::setPayload(String payload){
     this->payload = payload;
 }
 
-vector<unsigned char>* Publish::toChar(){
-    vector<unsigned char>* variableHeader = nullptr;
-    
-    if( this->topicName.length() != 0){
-        vector<unsigned char>* topicNameField = PacketUtil::buildField(this->topicName);
-        variableHeader = variableHeader == nullptr ? topicNameField : PacketUtil::concat(variableHeader, topicNameField);
+Bytes* Publish::toBytes(){
+    Bytes* variableHeader = new Bytes();
+    if( this->topicName.length() != 0 ){
+        Bytes* topicNameField = PacketUtil::build(this->topicName);
+        variableHeader->concat(topicNameField);
     }
 
     if( this->qosLevel == Publish::PUBLISH_QOS_LEVEL_1 || this->qosLevel == Publish::PUBLISH_QOS_LEVEL_2 ){
-        vector<unsigned char>* packetIdentifierField = new vector<unsigned char>();
+        Bytes* packetIdentifierField = new Bytes();
         packetIdentifierField->push_back( (unsigned char) ( (0xFF00 & this->packetIdentifier) >> 8 ) );
         packetIdentifierField->push_back( (unsigned char) (0x00FF & this->packetIdentifier) );
-        variableHeader = variableHeader == nullptr ? packetIdentifierField : PacketUtil::concat(variableHeader, packetIdentifierField);
+        variableHeader->concat(packetIdentifierField);
     }
+
+    Bytes* payload = new Bytes();
+    if ( this->payload.length() != 0 )
+        payload->concat(PacketUtil::build(this->payload));
         
+    this->setRemainingLength( variableHeader->getSize() + payload->getSize() );
 
-    vector<unsigned char>* payload = nullptr;
-    if ( this->payload.length() != 0)
-        payload = PacketUtil::buildField(this->payload);
-    
-    this->setRemainingLength( variableHeader->size() + payload->size() );
-
-    vector<unsigned char>* result = ControlPacket::toChar();
-    result = PacketUtil::concat(result, variableHeader);
-    result = PacketUtil::concat(result, payload);
+    Bytes* result = ControlPacket::toBytes();
+    result->concat(variableHeader);
+    result->concat(payload);
     return result;
 }
