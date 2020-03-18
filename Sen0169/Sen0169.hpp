@@ -8,20 +8,20 @@ using namespace std;
 class Sen0169 {
     private:
         unsigned int pin;
-        unsigned int offset;
+        float offset;
         unsigned int* readings;
         unsigned int index;
 
     public:
-        Sen0169(const unsigned int pin, const unsigned int offset);
+        Sen0169(const unsigned int pin, const float offset);
 
         unsigned int getPin();
 
         void setPin(const unsigned int pin);
 
-        unsigned int getOffset();
+        float getOffset();
 
-        void setOffset(const unsigned int offset);
+        void setOffset(const float offset);
 
         unsigned int* getReadings();
 
