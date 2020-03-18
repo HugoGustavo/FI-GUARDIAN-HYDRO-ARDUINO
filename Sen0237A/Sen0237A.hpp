@@ -33,7 +33,7 @@ class Sen0237A {
         int index;
     
     public:
-        Sen0237A(const unsigned int pin, const bool modeCalibration);
+        Sen0237A(const unsigned int pin, const bool modeCalibration=false);
 
         bool isModeCalibration();
 
