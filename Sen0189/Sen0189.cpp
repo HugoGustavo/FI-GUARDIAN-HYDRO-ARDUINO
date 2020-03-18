@@ -10,7 +10,7 @@ unsigned int Sen0189::getPin(){
     return this->pin;
 }
 
-void Sen0189::setPing(const unsigned int pin){
+void Sen0189::setPin(const unsigned int pin){
     this->pin = pin;
 }
 

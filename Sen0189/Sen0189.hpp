@@ -12,7 +12,7 @@ class Sen0189 {
 
         unsigned int getPin();
 
-        void setPing(const unsigned int pin);
+        void setPin(const unsigned int pin);
 
         float read();
 };
