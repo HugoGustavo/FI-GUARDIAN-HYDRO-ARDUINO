@@ -41,23 +41,23 @@ class Sen0237A {
 
         unsigned int getSaturationDoVoltage();
 
-        void setSaturationDoVoltage(unsigned int saturationDoVoltage);
+        void setSaturationDoVoltage(const unsigned int saturationDoVoltage);
 
         unsigned int getSaturationDoTemperature();
 
-        void setSaturationDoTemperature(unsigned int saturationDoTemperature);
+        void setSaturationDoTemperature(const unsigned int saturationDoTemperature);
 
         float getAverageVoltage();
 
-        void setAverageVoltage(float averageVoltage);
+        void setAverageVoltage(const float averageVoltage);
 
         float getTemperature();
 
-        void setTemperature(float temperature);
+        void setTemperature(const float temperature);
 
         unsigned int getPin();
 
-        void setPin(unsigned int pin);
+        void setPin(const unsigned int pin);
 
         int* getReadings();
 
@@ -65,7 +65,7 @@ class Sen0237A {
 
         int getIndex();
 
-        void setIndex(int index);
+        void setIndex(const int index);
     
         float read();
 

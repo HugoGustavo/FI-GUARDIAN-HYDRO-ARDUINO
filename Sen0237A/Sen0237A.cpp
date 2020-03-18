@@ -31,7 +31,7 @@ unsigned int Sen0237A::getSaturationDoVoltage(){
     return this->saturationDoVoltage;
 }
 
-void Sen0237A::setSaturationDoVoltage(unsigned int saturationDoVoltage){
+void Sen0237A::setSaturationDoVoltage(const unsigned int saturationDoVoltage){
     this->saturationDoVoltage = saturationDoVoltage;
 }
 
@@ -39,7 +39,7 @@ unsigned int Sen0237A::getSaturationDoTemperature(){
     return this->saturationDoTemperature;
 }
 
-void Sen0237A::setSaturationDoTemperature(unsigned int saturationDoTemperature){
+void Sen0237A::setSaturationDoTemperature(const unsigned int saturationDoTemperature){
     this->saturationDoTemperature = saturationDoTemperature;
 }
 
@@ -47,7 +47,7 @@ float Sen0237A::getAverageVoltage(){
     return this->averageVoltage;
 }
 
-void Sen0237A::setAverageVoltage(float averageVoltage){
+void Sen0237A::setAverageVoltage(const float averageVoltage){
     this->averageVoltage = averageVoltage;
 }
 
@@ -55,7 +55,7 @@ float Sen0237A::getTemperature(){
     return this->temperature;
 }
 
-void Sen0237A::setTemperature(float temperature){
+void Sen0237A::setTemperature(const float temperature){
     this->temperature = temperature;
 }
 
@@ -63,7 +63,7 @@ unsigned int Sen0237A::getPin(){
     return this->pin;
 }
 
-void Sen0237A::setPin(unsigned int pin){
+void Sen0237A::setPin(const unsigned int pin){
     this->pin = pin;
 }
 
@@ -79,7 +79,7 @@ int Sen0237A::getIndex(){
     return this->index;
 }
 
-void Sen0237A::setIndex(int index){
+void Sen0237A::setIndex(const int index){
     this->index = index;
 }
 
