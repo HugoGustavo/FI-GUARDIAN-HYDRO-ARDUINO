@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Sen0161::Sen0161(const unsigned int pin, const unsigned int offset){
+Sen0161::Sen0161(const unsigned int pin, const float offset){
     this->pin = pin;
     this->offset = offset;
     this->readings = new unsigned int[40];
@@ -18,11 +18,11 @@ void Sen0161::setPin(const unsigned int pin){
     this->pin = pin;
 }
 
-unsigned int Sen0161::getOffset(){
+float Sen0161::getOffset(){
     return this->offset;
 }
 
-void Sen0161::setOffset(const unsigned int offset){
+void Sen0161::setOffset(const float offset){
     this->offset = offset;
 }
 
