@@ -13,11 +13,11 @@ class Sen0165 {
         unsigned int index;
 
     public:
-        Sen0165(const unsigned int orpPin, const unsigned int offset);
+        Sen0165(const unsigned int pin, const unsigned int offset);
 
         unsigned int getPin();
 
-        void setPin(const unsigned int orpPin);
+        void setPin(const unsigned int pin);
 
         unsigned int getOffset();
 
