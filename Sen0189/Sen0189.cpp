@@ -15,6 +15,6 @@ void Sen0189::setPin(const unsigned int pin){
 }
 
 float Sen0189::read(){
-    int sensorValue = analogRead(A0);
+    int sensorValue = analogRead(this->pin);
     return sensorValue * (5.0 / 1024.0);
 }
