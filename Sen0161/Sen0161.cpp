@@ -50,7 +50,7 @@ float Sen0161::read(){
 }
 
 float Sen0161::average(){
-    int maximum, minimum;
+    unsigned int maximum, minimum;
     if( this->readings[0] < this->readings[1] ){
         minimum = this->readings[0]; maximum = this->readings[1];
     }
