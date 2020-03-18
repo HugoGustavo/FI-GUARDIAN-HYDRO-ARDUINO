@@ -13,7 +13,7 @@ class Sen0169 {
         unsigned int index;
 
     public:
-        Sen0169(const unsigned int pin, const float offset);
+        Sen0169(const unsigned int pin, const float offset=0.00);
 
         unsigned int getPin();
 
